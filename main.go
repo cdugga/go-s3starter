@@ -18,7 +18,20 @@ func createSession() *session.Session{
 	return sess
 }
 
-func listBucketObjects(s string){
+func listObjects(b string){
+	sess := s.(*session.Session)
+	svc := s3.New(sess)
+
+	input := &s3.ListObjectsInput{
+		Bucket: aws.String(b),
+	}
+
+	objects, err := svc.ListObjects(input)
+	if  err != nil{
+		fmt.Printf("Failed to fetch bucket objects")
+	}
+
+	fmt.Print(objects)
 
 }
 
@@ -89,6 +102,6 @@ func main() {
 	// 2. upload file
 	uploadFile(bucket)
 	// 3. list objects in bucket
-
+	listObjects(bucket)
 }
 
