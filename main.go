@@ -18,7 +18,11 @@ func createSession() *session.Session{
 	return sess
 }
 
-func uploadFile(){
+func listBucketObjects(s string){
+
+}
+
+func uploadFile(b string){
 
 	filename := os.Args[1]
 	file, err := os.Open(filename)
@@ -32,7 +36,7 @@ func uploadFile(){
 	uploader := s3manager.NewUploader(sess)
 
 	upParams := &s3manager.UploadInput{
-		Bucket: aws.String("cloudstarter.org"),
+		Bucket: aws.String(b),
 		Key:    aws.String(filename),
 		Body:   file,
 	}
@@ -47,12 +51,12 @@ func uploadFile(){
 	fmt.Printf("Successfully uploaded ", filename)
 }
 
-func createBucket(){
+func createBucket(b string){
 	sess := createSession()
 	svc := s3.New(sess)
 
 	input := &s3.CreateBucketInput{
-		Bucket: aws.String("cloudstarter.org"),
+		Bucket: aws.String(b),
 	}
 
 	result, err := svc.CreateBucket(input)
@@ -77,10 +81,14 @@ func createBucket(){
 }
 
 func main() {
+
+	var bucket = "cloudstarter.org"
+
 	// 1. create
-	createBucket()
+	createBucket(bucket)
 	// 2. upload file
-	uploadFile()
+	uploadFile(bucket)
 	// 3. list objects in bucket
+
 }
 
