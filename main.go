@@ -46,6 +46,10 @@ func createBucket(){
 }
 
 func main() {
+	// 1. create
 	createBucket()
+	// 2. upload file
+
+	// 3. list objects in bucket
 }
 
