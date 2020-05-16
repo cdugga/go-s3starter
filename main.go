@@ -6,7 +6,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"log"
+	"os"
 )
 
 func createSession() *session.Session{
@@ -14,6 +16,35 @@ func createSession() *session.Session{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 	return sess
+}
+
+func uploadFile(){
+
+	filename := os.Args[1]
+	file, err := os.Open(filename)
+
+	if err != nil {
+		fmt.Printf("Unable to open file %q, %v", err)
+	}
+	defer file.Close()
+
+	sess := createSession()
+	uploader := s3manager.NewUploader(sess)
+
+	upParams := &s3manager.UploadInput{
+		Bucket: aws.String("cloudstarter.org"),
+		Key:    aws.String(filename),
+		Body:   file,
+	}
+
+	uploader.Upload(upParams)
+
+	if err != nil {
+		// Print the error and exit.
+		fmt.Printf("Unable to upload %q to %q, %v", filename, err)
+	}
+
+	fmt.Printf("Successfully uploaded ", filename)
 }
 
 func createBucket(){
@@ -49,7 +80,7 @@ func main() {
 	// 1. create
 	createBucket()
 	// 2. upload file
-
+	uploadFile()
 	// 3. list objects in bucket
 }
 
