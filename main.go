@@ -19,7 +19,7 @@ func createSession() *session.Session{
 }
 
 func listObjects(b string){
-	sess := s.(*session.Session)
+	sess := createSession()
 	svc := s3.New(sess)
 
 	input := &s3.ListObjectsInput{
@@ -31,7 +31,7 @@ func listObjects(b string){
 		fmt.Printf("Failed to fetch bucket objects")
 	}
 
-	fmt.Print(objects)
+	fmt.Print("objects\n",objects)
 
 }
 
