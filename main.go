@@ -25,17 +25,17 @@ func createCloudFrontDistribution(url string) {
 	svc := cloudfront.New(sess)
 
 	params := &cloudfront.CreateDistributionInput{DistributionConfig: &cloudfront.DistributionConfig{
-		Aliases: &cloudfront.Aliases{
-			Items:    []*string{aws.String("cloudstarter.example.com"),aws.String("*cloudstarter.example.com"), },
-			Quantity: aws.Int64(2),
-		},
+		//Aliases: &cloudfront.Aliases{
+		//	Items:    []*string{aws.String("cloudstarter.example.com"),aws.String("*cloudstarter.example.com"), },
+		//	Quantity: aws.Int64(2),
+		//},
 		Origins: &cloudfront.Origins{
 			Items: []*cloudfront.Origin{
 				{
+
 					DomainName: aws.String("cloudstarter.org"),
-					Id:         aws.String("cloudstarter"),
-					//OriginPath: aws.String("/"),
-					
+					Id:         aws.String("s3-cloudstarter"),
+					//OriginPath: aws.String("cloudstarter.example.com"),
 					CustomOriginConfig: &cloudfront.CustomOriginConfig{
 						HTTPPort:               aws.Int64(80),
 						HTTPSPort:              aws.Int64(443),
@@ -60,7 +60,7 @@ func createCloudFrontDistribution(url string) {
 			},
 			ViewerProtocolPolicy: aws.String("redirect-to-https"),
 			MinTTL:               aws.Int64(42),
-			TargetOriginId:       aws.String("cloudstarter"),
+			TargetOriginId:       aws.String("s3-cloudstarter"),
 			TrustedSigners: &cloudfront.TrustedSigners{
 				Enabled:  aws.Bool(false),
 				Quantity: aws.Int64(0),
@@ -68,12 +68,12 @@ func createCloudFrontDistribution(url string) {
 		},
 		//HttpVersion:          nil,
 		//IsIPV6Enabled:        nil,
-		//Logging:           &cloudfront.LoggingConfig{
-		//		//	Bucket:         aws.String("cloudstarter.org"),
-		//		//	Enabled:        aws.Bool(true),
-		//		//	IncludeCookies: aws.Bool(true),
-		//		//	Prefix:         aws.String("myprefix"),
-		//		//},
+		Logging:           &cloudfront.LoggingConfig{
+			Bucket:         aws.String(""),
+			Enabled:        aws.Bool(false),
+			IncludeCookies: aws.Bool(false),
+			Prefix:         aws.String(""),
+		},
 		//OriginGroups:         nil,
 		PriceClass: 		aws.String("PriceClass_All"),
 		//Restrictions:         nil,
