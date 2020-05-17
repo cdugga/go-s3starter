@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -18,6 +19,60 @@ func createSession() *session.Session{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 	return sess
+}
+
+func createPolicy(b string) ([]byte) {
+
+	publicPolicy := map[string]interface{}{
+		"Version": "2012-10-17",
+		"Statement": []map[string]interface{}{
+			{
+				"Sid":       "AddPerm",
+				"Effect":    "Allow",
+				"Principal": "*",
+				"Action": []string{
+					"s3:GetObject",
+				},
+				"Resource": []string{
+					fmt.Sprintf("arn:aws:s3:::%s/*", b),
+				},
+			},
+		},
+	}
+
+	// Marshal the policy into a JSON value so that it can be sent to S3.
+	policy, err := json.Marshal(publicPolicy)
+	if err != nil {
+		fmt.Printf("Failed to marshal policy, %v", err)
+	}
+
+	return policy
+
+}
+
+func setBbucketPolicy(b string){
+	sess := createSession()
+	svc := s3.New(sess)
+
+	policy := createPolicy(b)
+
+	params := &s3.PutBucketPolicyInput{
+		Bucket:                        aws.String(b),
+		ConfirmRemoveSelfBucketAccess: aws.Bool(false),
+		Policy:                        aws.String(string(policy)),
+	}
+
+	// Call S3 to put the policy for the bucket.
+	_, err := svc.PutBucketPolicy(params)
+
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok && aerr.Code() == s3.ErrCodeNoSuchBucket {
+			// Special error handling for the when the bucket doesn't
+			// exists so we can give a more direct error message from the CLI.
+			fmt.Printf("Bucket %q does not exist", b)
+		}
+		fmt.Printf(("Unable to set bucket %q policy, %v", b, err)
+	}
 }
 
 func createCloudFrontDistribution(url string, ref string) {
@@ -160,6 +215,7 @@ func uploadFile(b string){
 		Bucket: aws.String(b),
 		Key:    aws.String(filename),
 		Body:   file,
+		ContentType: aws.String("text/html"),
 	}
 
 	uploader.Upload(upParams)
@@ -227,7 +283,7 @@ func main() {
 	// 4 enable static site hosting for s3 bucket
 	enableStaticHosting(bucket)
 	// 5. Enable permissions on bucket
-
+	setBbucketPolicy(bucket)
 	// 6. create CloudFront distribution
 	createCloudFrontDistribution(bucketUrl, ref)
 
