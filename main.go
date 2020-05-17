@@ -25,23 +25,49 @@ func createCloudFrontDistribution() {
 	svc := cloudfront.New(sess)
 
 	params := &cloudfront.CreateDistributionInput{DistributionConfig: &cloudfront.DistributionConfig{
-		Aliases:              nil,
-		CacheBehaviors:       nil,
-		CallerReference:      nil,
-		Comment:              nil,
-		CustomErrorResponses: nil,
-		DefaultCacheBehavior: nil,
-		DefaultRootObject:    nil,
-		Enabled:              nil,
-		HttpVersion:          nil,
-		IsIPV6Enabled:        nil,
-		Logging:              nil,
-		OriginGroups:         nil,
-		Origins:              nil,
-		PriceClass:           nil,
-		Restrictions:         nil,
-		ViewerCertificate:    nil,
-		WebACLId:             nil,
+		Aliases: &cloudfront.Aliases{
+			Items:    []*string{aws.String("cloudstarter.org.s3-website-eu-west-1.amazonaws.com")},
+			Quantity: aws.Int64(1),
+		},
+		//CacheBehaviors:       nil,
+		CallerReference: aws.String("cloudstarter.org-callerReference"),
+		Comment:           	aws.String("cloudstarter.org generated CloudFront Distribution"),
+		//CustomErrorResponses: nil,
+		DefaultCacheBehavior: &cloudfront.DefaultCacheBehavior{
+			ForwardedValues: &cloudfront.ForwardedValues{
+				//Cookies: &cloudfront.CookiePreference{
+				//	Forward: aws.String("whitelist"),
+				//},
+				QueryString: aws.Bool(false),
+			},
+			ViewerProtocolPolicy: aws.String("redirect-to-https"),
+			MinTTL:               aws.Int64(42),
+			TargetOriginId:       aws.String("origin_1"),
+			TrustedSigners: &cloudfront.TrustedSigners{
+				Enabled:  aws.Bool(false),
+				Quantity: aws.Int64(0),
+			},
+		},
+		DefaultRootObject: 	aws.String("index.html"),
+		Enabled: 			aws.Bool(true), // Required
+		//HttpVersion:          nil,
+		//IsIPV6Enabled:        nil,
+		//Logging:              nil,
+		//OriginGroups:         nil,
+		Origins: &cloudfront.Origins{
+			Items: []*cloudfront.Origin{
+				{
+					DomainName: aws.String("cloudstarter.org.s3-website-eu-west-1.amazonaws.com"),
+					Id:         aws.String("origin_1"),
+					OriginPath: aws.String("/"),
+				},
+			},
+			Quantity: aws.Int64(1),
+		},
+		PriceClass: 		aws.String("PriceClass_All"),
+		//Restrictions:         nil,
+		//ViewerCertificate:    nil,
+		//WebACLId:             nil,
 	}}
 
 	resp, err := svc.CreateDistribution(params)
@@ -55,6 +81,9 @@ func createCloudFrontDistribution() {
 	fmt.Println(resp)
 }
 
+func enableStaticHosting(b string){
+
+}
 
 func listObjects(b string){
 	sess := createSession()
@@ -145,5 +174,10 @@ func main() {
 	uploadFile(bucket)
 	// 3. list objects in bucket
 	listObjects(bucket)
+	// 4 enable static site hosting for s3 bucket
+
+	// 5. create CloudFront distribution
+	//createCloudFrontDistribution()
+
 }
 
