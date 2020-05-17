@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudfront"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"log"
@@ -17,6 +18,43 @@ func createSession() *session.Session{
 	}))
 	return sess
 }
+
+func createCloudFrontDistribution() {
+	sess := createSession()
+
+	svc := cloudfront.New(sess)
+
+	params := &cloudfront.CreateDistributionInput{DistributionConfig: &cloudfront.DistributionConfig{
+		Aliases:              nil,
+		CacheBehaviors:       nil,
+		CallerReference:      nil,
+		Comment:              nil,
+		CustomErrorResponses: nil,
+		DefaultCacheBehavior: nil,
+		DefaultRootObject:    nil,
+		Enabled:              nil,
+		HttpVersion:          nil,
+		IsIPV6Enabled:        nil,
+		Logging:              nil,
+		OriginGroups:         nil,
+		Origins:              nil,
+		PriceClass:           nil,
+		Restrictions:         nil,
+		ViewerCertificate:    nil,
+		WebACLId:             nil,
+	}}
+
+	resp, err := svc.CreateDistribution(params)
+
+	if err != nil {
+		// Print the error, cast err to awserr.Error to get the Code and
+		// Message from an error.
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println(resp)
+}
+
 
 func listObjects(b string){
 	sess := createSession()
