@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"log"
+	"math/rand"
 	"os"
 )
 
@@ -19,7 +20,7 @@ func createSession() *session.Session{
 	return sess
 }
 
-func createCloudFrontDistribution(url string) {
+func createCloudFrontDistribution(url string, ref string) {
 	sess := createSession()
 
 	svc := cloudfront.New(sess)
@@ -33,7 +34,7 @@ func createCloudFrontDistribution(url string) {
 			Items: []*cloudfront.Origin{
 				{
 
-					DomainName: aws.String("cloudstarter.org"),
+					DomainName: aws.String(url),
 					Id:         aws.String("s3-cloudstarter"),
 					//OriginPath: aws.String("cloudstarter.example.com"),
 					CustomOriginConfig: &cloudfront.CustomOriginConfig{
@@ -48,7 +49,7 @@ func createCloudFrontDistribution(url string) {
 		//CacheBehaviors:       nil,
 		Enabled: 			aws.Bool(true), // Required
 		DefaultRootObject: 	aws.String("index.html"),
-		CallerReference: aws.String("cloudstarter.org"),
+		CallerReference: aws.String(ref),
 		Comment:           	aws.String("cloudstarter.org generated CloudFront Distribution"),
 		//CustomErrorResponses: nil,
 		DefaultCacheBehavior: &cloudfront.DefaultCacheBehavior{
@@ -200,10 +201,22 @@ func createBucket(b string){
 	fmt.Println(result)
 }
 
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randSeq(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
+
 func main() {
 
 	var bucket = "cloudstarter.org"
 	var bucketUrl = "cloudstarter.org.s3-website-eu-west-1.amazonaws.com"
+	ref := randSeq(10)
+
 
 	// 1. create
 	createBucket(bucket)
@@ -216,7 +229,7 @@ func main() {
 	// create route 53 CNAME
 
 	// 5. create CloudFront distribution
-	createCloudFrontDistribution(bucketUrl)
+	createCloudFrontDistribution(bucketUrl, ref)
 
 }
 
