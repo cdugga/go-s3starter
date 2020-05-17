@@ -83,6 +83,27 @@ func createCloudFrontDistribution() {
 
 func enableStaticHosting(b string){
 
+	sess := createSession()
+	svc := s3.New(sess)
+
+	params := &s3.PutBucketWebsiteInput{
+		Bucket: aws.String(b),
+		WebsiteConfiguration: &s3.WebsiteConfiguration{
+			IndexDocument: &s3.IndexDocument{
+				Suffix: aws.String("index.html"),
+			},
+		},
+	}
+
+	c, err := svc.PutBucketWebsite(params)
+	if err != nil {
+		fmt.Printf("Unable to set bucket %q website configuration, %v",
+			b, err)
+	}
+
+	fmt.Print(c)
+
+	fmt.Printf("Successfully set bucket %q website configuration\n", b)
 }
 
 func listObjects(b string){
@@ -175,7 +196,7 @@ func main() {
 	// 3. list objects in bucket
 	listObjects(bucket)
 	// 4 enable static site hosting for s3 bucket
-
+	enableStaticHosting(bucket)
 	// 5. create CloudFront distribution
 	//createCloudFrontDistribution()
 
