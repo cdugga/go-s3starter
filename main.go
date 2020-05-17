@@ -226,9 +226,9 @@ func main() {
 	listObjects(bucket)
 	// 4 enable static site hosting for s3 bucket
 	enableStaticHosting(bucket)
-	// create route 53 CNAME
+	// 5. Enable permissions on bucket
 
-	// 5. create CloudFront distribution
+	// 6. create CloudFront distribution
 	createCloudFrontDistribution(bucketUrl, ref)
 
 }
