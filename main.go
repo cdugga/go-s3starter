@@ -19,14 +19,14 @@ func createSession() *session.Session{
 	return sess
 }
 
-func createCloudFrontDistribution() {
+func createCloudFrontDistribution(url string) {
 	sess := createSession()
 
 	svc := cloudfront.New(sess)
 
 	params := &cloudfront.CreateDistributionInput{DistributionConfig: &cloudfront.DistributionConfig{
 		Aliases: &cloudfront.Aliases{
-			Items:    []*string{aws.String("cloudstarter.org.s3-website-eu-west-1.amazonaws.com")},
+			Items:    []*string{aws.String(url)},
 			Quantity: aws.Int64(1),
 		},
 		//CacheBehaviors:       nil,
@@ -35,14 +35,14 @@ func createCloudFrontDistribution() {
 		//CustomErrorResponses: nil,
 		DefaultCacheBehavior: &cloudfront.DefaultCacheBehavior{
 			ForwardedValues: &cloudfront.ForwardedValues{
-				//Cookies: &cloudfront.CookiePreference{
-				//	Forward: aws.String("whitelist"),
-				//},
+				Cookies: &cloudfront.CookiePreference{
+					Forward: aws.String("whitelist"),
+				},
 				QueryString: aws.Bool(false),
 			},
 			ViewerProtocolPolicy: aws.String("redirect-to-https"),
 			MinTTL:               aws.Int64(42),
-			TargetOriginId:       aws.String("origin_1"),
+			TargetOriginId:       aws.String("cloudstarter.org"),
 			TrustedSigners: &cloudfront.TrustedSigners{
 				Enabled:  aws.Bool(false),
 				Quantity: aws.Int64(0),
@@ -57,9 +57,16 @@ func createCloudFrontDistribution() {
 		Origins: &cloudfront.Origins{
 			Items: []*cloudfront.Origin{
 				{
-					DomainName: aws.String("cloudstarter.org.s3-website-eu-west-1.amazonaws.com"),
-					Id:         aws.String("origin_1"),
-					OriginPath: aws.String("/"),
+					DomainName: aws.String(url),
+					Id:         aws.String("cloudstarter.org"),
+					//OriginPath: aws.String("/"),
+					CustomOriginConfig: &cloudfront.CustomOriginConfig{
+						HTTPPort:               aws.Int64(80),
+						HTTPSPort:              aws.Int64(443),
+						OriginProtocolPolicy:   aws.String("https-only"),
+					},
+					//S3OriginConfig: &cloudfront.S3OriginConfig{
+					//	OriginAccessIdentity: aws.String("") },
 				},
 			},
 			Quantity: aws.Int64(1),
@@ -188,7 +195,8 @@ func createBucket(b string){
 func main() {
 
 	var bucket = "cloudstarter.org"
-
+	var bucketUrl = "cloudstarter.org.s3-website-eu-west-1.amazonaws.com"
+	
 	// 1. create
 	createBucket(bucket)
 	// 2. upload file
@@ -198,7 +206,7 @@ func main() {
 	// 4 enable static site hosting for s3 bucket
 	enableStaticHosting(bucket)
 	// 5. create CloudFront distribution
-	//createCloudFrontDistribution()
+	createCloudFrontDistribution(bucketUrl)
 
 }
 
