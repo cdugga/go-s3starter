@@ -21,7 +21,7 @@ func createSession() *session.Session{
 	return sess
 }
 
-func createPolicy(b string) ([]byte) {
+func createPolicy(b string) []byte {
 
 	publicPolicy := map[string]interface{}{
 		"Version": "2012-10-17",
@@ -50,7 +50,7 @@ func createPolicy(b string) ([]byte) {
 
 }
 
-func setBbucketPolicy(b string){
+func setBucketPolicy(b string){
 	sess := createSession()
 	svc := s3.New(sess)
 
@@ -71,7 +71,7 @@ func setBbucketPolicy(b string){
 			// exists so we can give a more direct error message from the CLI.
 			fmt.Printf("Bucket %q does not exist", b)
 		}
-		fmt.Printf(("Unable to set bucket %q policy, %v", b, err)
+		fmt.Printf("Unable to set bucket %q policy, %v", b, err)
 	}
 }
 
@@ -283,7 +283,7 @@ func main() {
 	// 4 enable static site hosting for s3 bucket
 	enableStaticHosting(bucket)
 	// 5. Enable permissions on bucket
-	setBbucketPolicy(bucket)
+	setBucketPolicy(bucket)
 	// 6. create CloudFront distribution
 	createCloudFrontDistribution(bucketUrl, ref)
 
