@@ -48,7 +48,7 @@ func createCloudFrontDistribution(url string) {
 		//CacheBehaviors:       nil,
 		Enabled: 			aws.Bool(true), // Required
 		DefaultRootObject: 	aws.String("index.html"),
-		CallerReference: aws.String("cloudstarter.org-callerReference"),
+		CallerReference: aws.String("cloudstarter.org"),
 		Comment:           	aws.String("cloudstarter.org generated CloudFront Distribution"),
 		//CustomErrorResponses: nil,
 		DefaultCacheBehavior: &cloudfront.DefaultCacheBehavior{
@@ -213,6 +213,8 @@ func main() {
 	listObjects(bucket)
 	// 4 enable static site hosting for s3 bucket
 	enableStaticHosting(bucket)
+	// create route 53 CNAME
+
 	// 5. create CloudFront distribution
 	createCloudFrontDistribution(bucketUrl)
 
