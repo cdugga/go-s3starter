@@ -24,6 +24,7 @@ func listObjects(b string){
 
 	input := &s3.ListObjectsInput{
 		Bucket: aws.String(b),
+		EncodingType: aws.String("url"),
 	}
 
 	objects, err := svc.ListObjects(input)
@@ -31,7 +32,10 @@ func listObjects(b string){
 		fmt.Printf("Failed to fetch bucket objects")
 	}
 
-	fmt.Print("objects\n",objects)
+	for _, r := range objects.Contents {
+		fmt.Printf("Object name: %s \n", *r.Key)
+		fmt.Printf("Object last modified: %s \n", r.LastModified)
+	}
 
 }
 
@@ -58,10 +62,10 @@ func uploadFile(b string){
 
 	if err != nil {
 		// Print the error and exit.
-		fmt.Printf("Unable to upload %q to %q, %v", filename, err)
+		fmt.Printf("Unable to upload %q , %s", filename, err)
 	}
 
-	fmt.Printf("Successfully uploaded ", filename)
+	fmt.Printf("Successfully uploaded file: %s \n", filename)
 }
 
 func createBucket(b string){
