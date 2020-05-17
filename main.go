@@ -26,54 +26,61 @@ func createCloudFrontDistribution(url string) {
 
 	params := &cloudfront.CreateDistributionInput{DistributionConfig: &cloudfront.DistributionConfig{
 		Aliases: &cloudfront.Aliases{
-			Items:    []*string{aws.String(url)},
+			Items:    []*string{aws.String("cloudstarter.example.com"),aws.String("*cloudstarter.example.com"), },
+			Quantity: aws.Int64(2),
+		},
+		Origins: &cloudfront.Origins{
+			Items: []*cloudfront.Origin{
+				{
+					DomainName: aws.String("cloudstarter.org"),
+					Id:         aws.String("cloudstarter"),
+					//OriginPath: aws.String("/"),
+					
+					CustomOriginConfig: &cloudfront.CustomOriginConfig{
+						HTTPPort:               aws.Int64(80),
+						HTTPSPort:              aws.Int64(443),
+						OriginProtocolPolicy:   aws.String("http-only"),
+					},
+				},
+			},
 			Quantity: aws.Int64(1),
 		},
 		//CacheBehaviors:       nil,
+		Enabled: 			aws.Bool(true), // Required
+		DefaultRootObject: 	aws.String("index.html"),
 		CallerReference: aws.String("cloudstarter.org-callerReference"),
 		Comment:           	aws.String("cloudstarter.org generated CloudFront Distribution"),
 		//CustomErrorResponses: nil,
 		DefaultCacheBehavior: &cloudfront.DefaultCacheBehavior{
 			ForwardedValues: &cloudfront.ForwardedValues{
 				Cookies: &cloudfront.CookiePreference{
-					Forward: aws.String("whitelist"),
+					Forward: aws.String("all"),
 				},
 				QueryString: aws.Bool(false),
 			},
 			ViewerProtocolPolicy: aws.String("redirect-to-https"),
 			MinTTL:               aws.Int64(42),
-			TargetOriginId:       aws.String("cloudstarter.org"),
+			TargetOriginId:       aws.String("cloudstarter"),
 			TrustedSigners: &cloudfront.TrustedSigners{
 				Enabled:  aws.Bool(false),
 				Quantity: aws.Int64(0),
 			},
 		},
-		DefaultRootObject: 	aws.String("index.html"),
-		Enabled: 			aws.Bool(true), // Required
 		//HttpVersion:          nil,
 		//IsIPV6Enabled:        nil,
-		//Logging:              nil,
+		//Logging:           &cloudfront.LoggingConfig{
+		//		//	Bucket:         aws.String("cloudstarter.org"),
+		//		//	Enabled:        aws.Bool(true),
+		//		//	IncludeCookies: aws.Bool(true),
+		//		//	Prefix:         aws.String("myprefix"),
+		//		//},
 		//OriginGroups:         nil,
-		Origins: &cloudfront.Origins{
-			Items: []*cloudfront.Origin{
-				{
-					DomainName: aws.String(url),
-					Id:         aws.String("cloudstarter.org"),
-					//OriginPath: aws.String("/"),
-					CustomOriginConfig: &cloudfront.CustomOriginConfig{
-						HTTPPort:               aws.Int64(80),
-						HTTPSPort:              aws.Int64(443),
-						OriginProtocolPolicy:   aws.String("https-only"),
-					},
-					//S3OriginConfig: &cloudfront.S3OriginConfig{
-					//	OriginAccessIdentity: aws.String("") },
-				},
-			},
-			Quantity: aws.Int64(1),
-		},
 		PriceClass: 		aws.String("PriceClass_All"),
 		//Restrictions:         nil,
-		//ViewerCertificate:    nil,
+		ViewerCertificate:    &cloudfront.ViewerCertificate{
+			CloudFrontDefaultCertificate: aws.Bool(true),
+
+		},
 		//WebACLId:             nil,
 	}}
 
@@ -83,6 +90,7 @@ func createCloudFrontDistribution(url string) {
 		// Print the error, cast err to awserr.Error to get the Code and
 		// Message from an error.
 		fmt.Println(err.Error())
+
 		return
 	}
 	fmt.Println(resp)
@@ -196,7 +204,7 @@ func main() {
 
 	var bucket = "cloudstarter.org"
 	var bucketUrl = "cloudstarter.org.s3-website-eu-west-1.amazonaws.com"
-	
+
 	// 1. create
 	createBucket(bucket)
 	// 2. upload file
