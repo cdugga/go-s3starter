@@ -1,4 +1,4 @@
-module main.go
+module github.com/cdugga/go-s3starter
 
 go 1.14
 
