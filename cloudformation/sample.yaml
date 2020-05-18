@@ -17,9 +17,9 @@ Resources:
 #   Lambda:
 #     Type: 'AWS::Lambda::Function'
 #     Properties: {}
-  S3Bucket:
-    Type: 'AWS::S3::Bucket'
-    Properties: 
+    S3Bucket:
+      Type: 'AWS::S3::Bucket'
+      Properties: 
         AccessControl: PublicRead
         BucketName: !Ref BucketName
         VersioningConfiguration:
@@ -27,18 +27,64 @@ Resources:
         WebsiteConfiguration:
             ErrorDocument: !Ref LandingPage
             IndexDocument: !Ref LandingPage
-   
-  OpenBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
+    OpenBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
         Bucket: !Ref S3Bucket # attach to bucket being created
         PolicyDocument:
             Statement: # lets the public access/view the contents of your Bucket, i.e. web app
               - Action: 's3:GetObject'
                 Effect: Allow
-                Principal: '*' # wildcard, allow all requests
+                Principal: '*' 
                 Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, /*]]
-  
+    Distribution:
+      Type: AWS::CloudFront::Distribution
+      Properties: 
+        DistributionConfig: 
+            # CacheBehaviors:
+            #     - LambdaFunctionAssociations:
+            #         - EventType: string-value
+            #         LambdaFunctionARN: string-value
+            DefaultCacheBehavior:
+                ForwardedValues:
+                    QueryString: false
+                    Cookies:
+                      Forward: all
+                ViewerProtocolPolicy: redirect-to-https
+                MinTTL: 42
+                TargetOriginId: s3-cloudstarter
+                AllowedMethods:
+                    - GET
+                    - HEAD
+                    - DELETE
+                    - OPTIONS
+                    - PATCH
+                    - POST
+                    - PUT
+                # LambdaFunctionAssociations:
+                # - EventType: string-value
+                #     LambdaFunctionARN: string-value
+            IPV6Enabled: false
+            Enabled: true
+            DefaultRootObject: index.html
+            # HttpVersion: 'http2'
+            Origins:
+                - DomainName: cdugga-s3starter.s3-eu-west-1.amazonaws.com
+                  Id: s3-cloudstarter
+                  CustomOriginConfig:
+                    HTTPPort: '80'
+                    HTTPSPort: '443'
+                    OriginProtocolPolicy: http-only
+                    # OriginKeepaliveTimeout: !Ref 'OriginKeepaliveTimeout'
+                    # OriginReadTimeout: !Ref 'OriginReadTimeout'
+                    OriginSSLProtocols:
+                      - TLSv1
+                      - TLSv1.1
+                      - TLSv1.2
+                      - SSLv3
+        Tags: 
+        - Tag
+
 #   CloudFrontDist:
 #     Type: 'AWS::CloudFront::Distribution'
 #     Properties: {}
