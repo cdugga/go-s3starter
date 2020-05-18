@@ -1,5 +1,15 @@
 AWSTemplateFormatVersion: 2010-09-09
 
+Parameters: # params passed to "--parameter-overrides" in CLI
+  BucketName:
+    Description: Unique name for your bucket. This will be in the S3 url to your React app.
+    Type: String
+    Default: cdugga-s3starter
+  LandingPage:
+        Description: Index.html/error.html same page if React application
+        Type: String
+        Default: index.html
+
 Resources:
 #   ApiGateway:
 #     Type: 'AWS::ApiGateway::RestApi'
@@ -11,9 +21,12 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties: 
         AccessControl: PublicRead
-        BucketName: s3bucketuser
+        BucketName: !Ref BucketName
         VersioningConfiguration:
-         Status: Suspended
+            Status: Suspended
+        WebsiteConfiguration:
+            ErrorDocument: !Ref LandingPage
+            IndexDocument: !Ref LandingPage
 #   CloudFrontDist:
 #     Type: 'AWS::CloudFront::Distribution'
 #     Properties: {}
