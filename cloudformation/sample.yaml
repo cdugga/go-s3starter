@@ -27,6 +27,18 @@ Resources:
         WebsiteConfiguration:
             ErrorDocument: !Ref LandingPage
             IndexDocument: !Ref LandingPage
+   
+  OpenBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+        Bucket: !Ref S3Bucket # attach to bucket being created
+        PolicyDocument:
+            Statement: # lets the public access/view the contents of your Bucket, i.e. web app
+              - Action: 's3:GetObject'
+                Effect: Allow
+                Principal: '*' # wildcard, allow all requests
+                Resource: !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, /*]]
+  
 #   CloudFrontDist:
 #     Type: 'AWS::CloudFront::Distribution'
 #     Properties: {}
