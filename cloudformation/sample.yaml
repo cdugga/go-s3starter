@@ -1,27 +1,20 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Resources:
-  AGRA17E9M:
-    Type: 'AWS::ApiGateway::RestApi'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: bf1aaadb-663c-4470-a234-a9f0045c2b56
-  LF3Z9D2:
-    Type: 'AWS::Lambda::Function'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: f7aa0c51-1813-4d35-b92c-c40c4de17112
-  S3B1GV2C:
+#   ApiGateway:
+#     Type: 'AWS::ApiGateway::RestApi'
+#     Properties: {}
+#   Lambda:
+#     Type: 'AWS::Lambda::Function'
+#     Properties: {}
+  S3Bucket:
     Type: 'AWS::S3::Bucket'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: dee4f92a-ec8b-4c99-9b54-37a6a5814945
-  CFD4EQMD:
-    Type: 'AWS::CloudFront::Distribution'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 1433113b-68c0-4271-8092-64d801c5e8bb
+    Properties: 
+        AccessControl: PublicRead
+        BucketName: s3bucketuser
+        VersioningConfiguration:
+         Status: Suspended
+#   CloudFrontDist:
+#     Type: 'AWS::CloudFront::Distribution'
+#     Properties: {}
+ 
