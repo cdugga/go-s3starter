@@ -69,7 +69,7 @@ Resources:
       Type: 'AWS::S3::Bucket'
       Properties: 
         AccessControl: PublicRead
-        BucketName: !Ref BucketName
+        BucketName: { "Fn::Sub": [ "${stack}.${bucket}", { "bucket": {"Ref" : "BucketName" } , "stack": {"Ref":"AWS::StackName"}} ]} 
         VersioningConfiguration:
             Status: Suspended
         WebsiteConfiguration:
@@ -130,8 +130,8 @@ Resources:
                       - TLSv1.1
                       - TLSv1.2
                       - SSLv3
-        Tags: 
-        - Tag
+        #Tags: 
+        #- Tag
 
 #   CloudFrontDist:
 #     Type: 'AWS::CloudFront::Distribution'
