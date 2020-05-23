@@ -23,9 +23,8 @@ Resources:
       Properties:
         Handler: index.go
         Runtime: go1.x
-        Tracing: Active
         Code:
-          Zipfile: |
+          ZipFile: |
               import (
                   "encoding/json"
 
@@ -33,7 +32,6 @@ Resources:
                   "github.com/aws/aws-lambda-go/lambda"
                   "github.com/sbstjn/go-lambda-example/repository"
                 )
-
 
                 func handleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
                   
@@ -43,12 +41,6 @@ Resources:
                 func main() {
                   lambda.Start(handleRequest)
                 }
-        Events:
-          GetEvent:
-            Type: Api
-            Properties:
-              Path: /s3starter/
-              Method: get
     S3Bucket:
       Type: 'AWS::S3::Bucket'
       Properties: 
