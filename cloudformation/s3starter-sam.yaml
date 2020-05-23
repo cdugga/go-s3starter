@@ -28,7 +28,7 @@ Resources:
   MyLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: handler/s3starter
+      Handler: ./handler/s3starter.go
       Timeout: 10
       Role: !Ref LambdaExecutionRole
       Runtime: go1.x
