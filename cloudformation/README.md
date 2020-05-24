@@ -6,7 +6,7 @@ aws cloudformation delete-stack --stack-name s3starter
 
 # SAM CLI create simple lambda and api endpoint
 
-sudo sam init --runtime go1.x --name s3startermod
+sudo sam init --runtime go1.x --name test
 
 # test locally with SAM
 sam local start-api

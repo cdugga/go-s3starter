@@ -12,7 +12,7 @@ Resources:
   S3StarterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://s3starter-lambda/a63e37b4afbb9edd9b32c4bb7419a5b3
+      CodeUri: s3://s3starter-lambda/6f89f23eb0a916123a10d1dbab366eb1
       Handler: s3starter
       Runtime: go1.x
       Tracing: Active
@@ -29,7 +29,7 @@ Outputs:
   S3StarterAPI:
     Description: API Gateway endpoint URL for Prod environment for First Function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/starter/
   S3StarterFunction:
     Description: First Lambda Function ARN
     Value:
