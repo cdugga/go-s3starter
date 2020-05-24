@@ -22,7 +22,14 @@ aws s3 mb s3://s3starter-lambda
 sam package --output-template-file packaged.yaml  --s3-bucket s3starter-lambda
 
 # deploy 
-sam deploy --template-file C:\Users\dugga\cdugga_code_resources\projects_go\s3starter\s3startermod\packaged.yaml --stack-name s3starter-lambda --capabilities CAPABILITY_IAM 
+sam deploy --template-file C:\Users\dugga\cdugga_code_resources\projects_go\s3starter\sam\s3startermod\packaged.yaml --stack-name s3starter-lambda --capabilities CAPABILITY_IAM 
 
 # get endpoint
 aws cloudformation describe-stacks --stack-name s3starter-lambda  --query 'Stacks[].Outputs'
+
+
+# build go module ( using lambda utility for go)
+set GO111MODULE=on
+go.exe get -u github.com/aws/aws-lambda-go/cmd/build-lambda-zip
+
+~\Go\Bin\build-lambda-zip.exe -o main.zip .\s3starter\s3starter
