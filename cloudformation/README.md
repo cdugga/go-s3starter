@@ -27,6 +27,7 @@ sam deploy --template-file C:\Users\dugga\cdugga_code_resources\projects_go\s3st
 # get endpoint
 aws cloudformation describe-stacks --stack-name s3starter-lambda  --query 'Stacks[].Outputs'
 
+# file permission issues uploading through windows. Use utility listed below
 
 # build go module ( using lambda utility for go)
 set GO111MODULE=on

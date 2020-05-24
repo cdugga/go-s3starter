@@ -12,7 +12,7 @@ Resources:
   S3StarterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://s3starter-lambda/6f89f23eb0a916123a10d1dbab366eb1
+      CodeUri: s3://s3starter-lambda/cf13d13f3e41d20abff93132f78fee8c
       Handler: s3starter
       Runtime: go1.x
       Tracing: Active

@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-func hello() (string, error) {
+func hello() (events.APIGatewayProxyResponse, error) {
 	// return "Hello ƛ!", nil
 	  // some error occured
 	return events.APIGatewayProxyResponse{
