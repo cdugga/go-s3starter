@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 's3startermod
+
+  Sample SAM Template for s3startermod
+
+  '
+Globals:
+  Function:
+    Timeout: 10
+Resources:
+  S3StarterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://s3starter-lambda/9a61bfb442beb7ebdee6b7266cfee5e4
+      Handler: s3starter
+      Runtime: go1.x
+      Tracing: Active
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /starter
+            Method: GET
+      Environment:
+        Variables:
+          PARAM1: VALUE
+Outputs:
+  S3StarterAPI:
+    Description: API Gateway endpoint URL for Prod environment for First Function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+  S3StarterFunction:
+    Description: First Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - S3StarterFunction
+      - Arn
+  S3StarterFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value:
+      Fn::GetAtt:
+      - S3StarterFunctionRole
+      - Arn
